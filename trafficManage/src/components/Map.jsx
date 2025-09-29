@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { GoogleMap, TrafficLayer, Marker } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 
-const center = { lat: 22.5744, lng: 88.3629 };
+const center = { lat: 20.2960, lng: 85.8246 };
 const mapContainerStyle = { width: "100%", height: "100%" };
 
 // Configuration

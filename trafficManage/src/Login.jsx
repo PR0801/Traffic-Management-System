@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -7,8 +8,10 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    setLoading(true);
     try {
       const response = await fetch("https://trafficmanagementsystem-r31f.onrender.com/login", {
         method: "POST",
@@ -24,11 +27,11 @@ export default function Login() {
         // store token
         setIsSuccess(true)
         if (rememberMe) {
-          sessionStorage.setItem("token", data.token);
-          localStorage.setItem("name", data.user.name);
-        } else {
           localStorage.setItem("token", data.token);
           localStorage.setItem("name", data.user.name);
+        } else {
+          sessionStorage.setItem("token", data.token);
+          sessionStorage.setItem("name", data.user.name);
         }
         navigate("/"); // redirect to homepage/dashboard
       } else {
@@ -37,10 +40,25 @@ export default function Login() {
       }
     } catch (error) {
       console.error("Error fetching from backend:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
+    <>
+    {loading && (
+   <div className="flex flex-col justify-center items-center h-screen space-y-4">
+      <div className="flex space-x-3">
+        <div className="w-15 h-15 bg-red-600 rounded-full animate-fall" style={{ animationDelay: '0s' }}></div>
+        <div className="w-15 h-15 bg-yellow-400 rounded-full animate-fall" style={{ animationDelay: '0.2s' }}></div>
+        <div className="w-15 h-15 bg-green-500 rounded-full animate-fall" style={{ animationDelay: '0.4s' }}></div>
+      </div>
+      <span className="text-gray-700 text-2xl font-medium animate-pulse mt-6">
+        Loading...
+      </span>
+    </div>
+)}
     <div className="min-h-screen flex items-center justify-center p-4">
       {/* Login Card */}
       <div className="bg-white rounded-lg shadow-xl overflow-hidden max-w-4xl w-full flex">
@@ -145,5 +163,6 @@ export default function Login() {
         </div>
       </div>
     </div>
+    </>
   );
 }

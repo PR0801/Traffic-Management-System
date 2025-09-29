@@ -43,7 +43,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 app.get("/alerts", async(req,res) => {
     const apiKey = process.env.TOM_TOM_API;
     try {
-        const response = await axios.get(`https://api.tomtom.com/traffic/services/5/incidentDetails?key=${apiKey}&bbox=88.2500,22.4500,88.4500,22.6500&fields={incidents{type,geometry{type,coordinates},properties{iconCategory,id,events{description},magnitudeOfDelay,tmc{points{location}}}}}&language=en-GB&t=1111&timeValidityFilter=present`,
+        const response = await axios.get(`https://api.tomtom.com/traffic/services/5/incidentDetails?key=${apiKey}&bbox=85.75,20.25,85.90,20.35&fields={incidents{type,geometry{type,coordinates},properties{iconCategory,id,events{description},magnitudeOfDelay,tmc{points{location}}}}}&language=en-GB&t=1111&timeValidityFilter=present`,
             {
     headers: {
       'User-Agent': 'Mozilla/5.0 (Node.js Backend)',

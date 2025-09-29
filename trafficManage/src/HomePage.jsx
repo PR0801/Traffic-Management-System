@@ -4,7 +4,7 @@ import Sidebar from './components/SideBar'
 import Alerts from './components/Alerts'
 import Resource from './components/Resource'
 export default function HomePage() {
-  const userName = localStorage.getItem("name") || "Guest";
+  const userName = sessionStorage.getItem("name") || "Guest";
 
   
   return (
