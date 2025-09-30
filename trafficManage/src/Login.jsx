@@ -47,7 +47,7 @@ export default function Login() {
 
   return (
     <>
-    {loading && (
+    {loading ? (
    <div className="flex flex-col justify-center items-center h-screen space-y-4">
       <div className="flex space-x-3">
         <div className="w-15 h-15 bg-red-600 rounded-full animate-fall" style={{ animationDelay: '0s' }}></div>
@@ -58,8 +58,8 @@ export default function Login() {
         Loading...
       </span>
     </div>
-)}
-    <div className="min-h-screen flex items-center justify-center p-4">
+) : (
+   <div className="min-h-screen flex items-center justify-center p-4">
       {/* Login Card */}
       <div className="bg-white rounded-lg shadow-xl overflow-hidden max-w-4xl w-full flex">
         {/* Left Panel - Login */}
@@ -163,6 +163,8 @@ export default function Login() {
         </div>
       </div>
     </div>
+)}
+   
     </>
   );
 }
