@@ -17,6 +17,18 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
 const saltRounds = 10;
 
+/* -------------------- SAFETY CHECK -------------------- */
+
+if (!JWT_SECRET) {
+  console.error("❌ JWT_SECRET is missing in environment variables");
+  process.exit(1);
+}
+
+if (!process.env.SUPABASE_CONNECTION_STRING) {
+  console.error("❌ SUPABASE_CONNECTION_STRING is missing");
+  process.exit(1);
+}
+
 /* -------------------- MIDDLEWARE -------------------- */
 
 app.use(
@@ -36,17 +48,14 @@ const { Pool } = pg;
 const db = new Pool({
   connectionString: process.env.SUPABASE_CONNECTION_STRING,
   ssl: { rejectUnauthorized: false },
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
 });
 
 db.on("connect", () => {
-  console.log("Database connected successfully");
+  console.log("✅ Database connected successfully");
 });
 
 db.on("error", (err) => {
-  console.error("Database connection error:", err);
+  console.error("❌ Database connection error:", err);
 });
 
 /* -------------------- AUTH ROUTES -------------------- */
@@ -59,8 +68,9 @@ app.post("/signup", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // check existing user (LOWERCASE TABLE NAME IS CRITICAL)
     const existingUser = await db.query(
-      "SELECT * FROM users WHERE email = $1",
+      "SELECT id FROM users WHERE email = $1",
       [email]
     );
 
@@ -70,8 +80,9 @@ app.post("/signup", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    // RETURN ONLY REQUIRED FIELDS
     const result = await db.query(
-      "INSERT INTO users (name, email, password) VALUES ($1,$2,$3) RETURNING *",
+      "INSERT INTO users (name, email, password) VALUES ($1,$2,$3) RETURNING id, name, email",
       [name, email, hashedPassword]
     );
 
@@ -83,14 +94,16 @@ app.post("/signup", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Signup successful",
       token,
       user,
     });
   } catch (error) {
-    console.error("Signup error:", error);
-    res.status(500).json({ message: "Signup failed" });
+    console.error("❌ SIGNUP ERROR:", error.message);
+    return res.status(500).json({
+      message: "Signup failed",
+    });
   }
 });
 
@@ -99,7 +112,7 @@ app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     const result = await db.query(
-      "SELECT * FROM users WHERE email = $1",
+      "SELECT id, name, email, password FROM users WHERE email = $1",
       [email]
     );
 
@@ -120,14 +133,18 @@ app.post("/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({
+    return res.json({
       message: "Login successful",
       token,
-      user,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "Login failed" });
+    console.error("❌ LOGIN ERROR:", error.message);
+    return res.status(500).json({ message: "Login failed" });
   }
 });
 
@@ -138,7 +155,7 @@ app.get("/alerts", authenticateToken, async (req, res) => {
     const apiKey = process.env.TOM_TOM_API;
 
     const response = await axios.get(
-      `https://api.tomtom.com/traffic/services/5/incidentDetails`,
+      "https://api.tomtom.com/traffic/services/5/incidentDetails",
       {
         params: {
           key: apiKey,
@@ -148,17 +165,13 @@ app.get("/alerts", authenticateToken, async (req, res) => {
           language: "en-GB",
           timeValidityFilter: "present",
         },
-        headers: {
-          "User-Agent": "Node.js Backend",
-          Accept: "application/json",
-        },
       }
     );
 
-    res.json(response.data.incidents);
+    return res.json(response.data.incidents);
   } catch (error) {
-    console.error("Alerts error:", error);
-    res.status(500).json({ message: "Failed to fetch alerts" });
+    console.error("❌ ALERTS ERROR:", error.message);
+    return res.status(500).json({ message: "Failed to fetch alerts" });
   }
 });
 
@@ -167,15 +180,16 @@ app.get("/detect", authenticateToken, async (req, res) => {
     const response = await axios.get(
       "https://monitoring-python-892386181347.asia-south1.run.app/vehicle_counts"
     );
-    res.json(response.data);
+    return res.json(response.data);
   } catch (error) {
-    console.error("Detect error:", error);
-    res.status(500).json({ message: "Failed to fetch vehicle data" });
+    console.error("❌ DETECT ERROR:", error.message);
+    return res.status(500).json({ message: "Failed to fetch vehicle data" });
   }
 });
 
 /* -------------------- SERVER -------------------- */
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
+
