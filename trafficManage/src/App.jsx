@@ -1,35 +1,66 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import HomePage from './HomePage';
-import Dashboard from './Dashboard';
-import Monitoring from './Monitoring';
-import Login from './Login';
-import Signup from './Signup';
-import ProtectedRoute from './middleware/ProtectedRoute';
-export default function App() {
-  return (
-    <div className='app'>
-       <div className={location.pathname === "/monitoring" ? "block" : "hidden"}>
-        <video
-          id="monitor-player"
-          controls
-          autoPlay
-          muted
-          loop
-          className="w-[640px] h-[360px] object-cover"
-          src="http://127.0.0.1:5000"
-        />
-      </div>
-    
-   <Routes>
-    <Route path='/Login' element = {<Login />} />
-           <Route path='/Signup' element = {<Signup />} />
+import React from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 
-    <Route path = "/" element ={ <ProtectedRoute><HomePage /></ProtectedRoute> } />
-        <Route path = "/Dashboard" element ={ <ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path = "/Monitoring" element ={ <ProtectedRoute><Monitoring /></ProtectedRoute> } />
-          
-   </Routes>
-  </div>
-  )
+import HomePage from "./HomePage";
+import Dashboard from "./Dashboard";
+import Monitoring from "./Monitoring";
+import Login from "./Login";
+import Signup from "./Signup";
+import ProtectedRoute from "./middleware/ProtectedRoute";
+
+export default function App() {
+  const location = useLocation();
+
+  return (
+    <div className="app">
+      {/* Show video ONLY on /monitoring */}
+      {location.pathname === "/monitoring" && (
+        <div className="block">
+          <video
+            id="monitor-player"
+            controls
+            autoPlay
+            muted
+            loop
+            className="w-[640px] h-[360px] object-cover"
+            src={`${import.meta.env.VITE_API_URL}/video`} 
+          />
+        </div>
+      )}
+
+      <Routes>
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        {/* Protected routes */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/monitoring"
+          element={
+            <ProtectedRoute>
+              <Monitoring />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </div>
+  );
 }
