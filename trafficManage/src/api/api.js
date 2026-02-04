@@ -1,6 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-// Get token from storage
 const getToken = () =>
   localStorage.getItem("token") ||
   sessionStorage.getItem("token");
@@ -8,17 +7,14 @@ const getToken = () =>
 export async function apiRequest(endpoint, options = {}) {
   const token = getToken();
 
-  const config = {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     headers: {
       "Content-Type": "application/json",
       ...(token && { Authorization: `Bearer ${token}` }),
     },
     ...options,
-  };
+  });
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-
-  // Auto logout on token expiry
   if (response.status === 401 || response.status === 403) {
     localStorage.clear();
     sessionStorage.clear();
