@@ -42,8 +42,3 @@ Notes:
 - Replace or remove entries that don't exist in your repo (e.g., `migrations/`, `docker/`, `frontend/`) or adjust file names/extensions to match the actual implementations (JS/TS/Python).
 - I can auto-generate this exact content into README.md and commit it, or create a branch + PR with the change if you'd prefer a review workflow.
 
-## Next steps I can take for you
-- If you want me to commit the change: tell me whether to push to the default branch (e.g., `main`) or create a new branch (please provide a branch name). I will then push the updated README to the repository.
-- If you prefer to review first: I can produce a patch/PR diff here for you to inspect and apply.
-
-I attempted to read the repo but got a 401 response, so I can't commit directly without repository write access. Tell me how you'd like to proceed (push to branch X, or create branch + PR), and I will apply the change.
