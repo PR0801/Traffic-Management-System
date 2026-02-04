@@ -37,7 +37,7 @@ const saltRounds = 10;
 const app = express();
 app.use(cors());
 app.use(express.json());
-const PORT = 3000;
+const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 app.get("/alerts", async(req,res) => {
@@ -141,6 +141,6 @@ app.get("/detect", async (req, res) => {
 
 
 
-app.listen(PORT, () => {
-    console.log(`listening on port ${PORT}`);
-})
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});
