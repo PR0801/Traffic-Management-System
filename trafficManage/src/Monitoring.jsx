@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "./components/SideBar";
 import Header from "./components/Header";
-import { apiRequest } from "../api/api";
-
+import { apiRequest } from "./api/api";
 const Monitoring = () => {
   const [counts, setCounts] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Latest data snapshot
   const latest = [...counts].reverse()[0];
-
   useEffect(() => {
     const fetchCounts = async () => {
       try {
@@ -21,12 +17,10 @@ const Monitoring = () => {
         setLoading(false);
       }
     };
-
     fetchCounts();
     const interval = setInterval(fetchCounts, 2000); // every 2 seconds
     return () => clearInterval(interval);
   }, []);
-
   return (
     <div className="flex items-center h-screen pr-10">
       <Sidebar />
@@ -97,7 +91,6 @@ const Monitoring = () => {
               )}
             </div>
           </div>
-
           {/* AI Suggestion */}
           <div className="bg-[#0B1E56] rounded-xl p-6">
             <h3 className="text-2xl font-bold mb-6">AI Suggestion :</h3>
@@ -112,5 +105,4 @@ const Monitoring = () => {
     </div>
   );
 };
-
 export default Monitoring;
