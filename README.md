@@ -6,8 +6,6 @@ Short description: A system for managing and optimizing traffic flow with backen
 Link : https://traffic-managementsystem.vercel.app
 
 
-
-
 **NOTE : DATABASE MAY BE DOWN**
 
 ## Repository structure
