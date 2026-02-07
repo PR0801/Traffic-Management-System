@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "./components/SideBar";
 import Header from "./components/Header";
-import { apiRequest } from "../sr/api/api";
+import { apiRequest } from "./api/api";
 const Monitoring = () => {
   const [counts, setCounts] = useState([]);
   const [loading, setLoading] = useState(true);
